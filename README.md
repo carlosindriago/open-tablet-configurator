@@ -173,6 +173,41 @@ Want to fine-tune your settings manually? You can edit `~/.wacom_settings.env` d
 
 ---
 
+## 🔧 Troubleshooting
+
+### Problem: Tablet only draws dots (no continuous lines) in web apps
+
+**Symptoms:**
+- Using Chrome/Firefox in web apps (Excalidraw, Figma, etc.)
+- Stylus clicks (dot) but doesn't drag/draw lines
+- Works fine with mouse
+
+**Cause:** Default pressure configuration uses high Threshold (26) and PressureCurve with a dead zone, causing browsers to not receive continuous pointer events.
+
+**Quick fix:**
+```bash
+# Apply web-optimized pressure settings
+./wacom-fix-web-apps.sh
+```
+
+Or manually:
+```bash
+xsetwacom --set 9 PressureCurve 0 0 100 100  # Linear curve
+xsetwacom --set 9 Threshold 10                 # Lower threshold
+xsetwacom --set 9 PressureRecalibration off    # Disable recalibration
+```
+
+**Permanent fix:** Update to latest version which includes these optimized defaults.
+
+### Problem: Stylus button doesn't toggle mode
+
+Verify toggle script is running:
+```bash
+ps aux | grep wacom_toggle
+```
+
+---
+
 ## 🤝 Contributing
 Contributions are welcome! If you want to help build the Wayland compatibility layer or add support for more Desktop Environments, feel free to submit a Pull Request.
 

@@ -18,15 +18,15 @@ fi
 SETTINGS_FILE="$USER_HOME/.wacom_settings.env"
 
 if [ -f "$SETTINGS_FILE" ]; then
-    # shellcheck source=/dev/null
-    source "$SETTINGS_FILE"
+ # shellcheck source=/dev/null
+ source "$SETTINGS_FILE"
 else
-    # Valores por defecto de emergencia
-    ROTATION="none"
-    BUTTON_2="3"
-    BUTTON_3="key F10"
-    SCREEN="ALL"
-    PRESSURE_CURVE="0 20 80 100"
+ # Valores por defecto de emergencia - FIX: más sensible para apps web
+ ROTATION="none"
+ BUTTON_2="3"
+ BUTTON_3="key F10"
+ SCREEN="ALL"
+ PRESSURE_CURVE="0 0 100 100" # FIX: Curva lineal total para mejor compatibilidad web
 fi
 
 echo -e "${BLUE}🔍 Buscando hardware Wacom en el sistema...${NC}"
@@ -88,18 +88,20 @@ for DEV in "${DEVICES[@]}"; do
     # Configuración específica por tipo
     TYPE=$(xsetwacom --list devices | grep "$DEV" | awk -F'type: ' '{print $2}' | awk '{print $1}')
     
-    case "$TYPE" in
-STYLUS)
-    xsetwacom --set "$DEV" button 2 "$BUTTON_2"
-    xsetwacom --set "$DEV" button 3 "$BUTTON_3"
-    # shellcheck disable=SC2086
-    xsetwacom --set "$DEV" PressureCurve $PRESSURE_CURVE
-    xsetwacom --set "$DEV" Mode Absolute
-    ;;
-        ERASER)
-            xsetwacom --set "$DEV" Mode Absolute
-            ;;
-    esac
+case "$TYPE" in
+ STYLUS)
+ xsetwacom --set "$DEV" button 2 "$BUTTON_2"
+ xsetwacom --set "$DEV" button 3 "$BUTTON_3"
+ # shellcheck disable=SC2086
+ xsetwacom --set "$DEV" PressureCurve $PRESSURE_CURVE
+ xsetwacom --set "$DEV" Mode Absolute
+ xsetwacom --set "$DEV" Threshold 10 # FIX: Threshold sensible para web apps
+ xsetwacom --set "$DEV" PressureRecalibration off # FIX: Elimina zona muerta
+ ;;
+ ERASER)
+ xsetwacom --set "$DEV" Mode Absolute
+ ;;
+esac
 done
 
 # 5. Armar resumen para la notificación
