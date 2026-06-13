@@ -74,6 +74,8 @@ chmod +x uninstall.sh
 
 ## 🖥️ Dashboard GUI Features
 
+![Dashboard Principal](docs/images/dashboard-orientacion.png)
+
 Launch the modern Electron dashboard for real-time configuration:
 ```bash
 cd ~/.open-tablet-configurator/dashboard
@@ -87,6 +89,12 @@ npm run dev
 - **Orientation:** Normal, Rotated 90°, Rotated -90°, Flipped 180° (Left-handed mode).
 - **Positioning Mode:** Absolute (drawing) or Relative (mouse-like).
 - **Pressure Curve:** 5 presets with visual SVG preview.
+- **Pen Buttons:** Quick mapping for upper and lower stylus buttons.
+
+<p align="center">
+  <img src="docs/images/dashboard-curvas.png" width="49%" alt="Sensibilidad y Mapeo de Área">
+  <img src="docs/images/dashboard-botones.png" width="49%" alt="Configuración de Botones del Lápiz">
+</p>
 
 ---
 
