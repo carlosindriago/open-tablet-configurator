@@ -2,12 +2,8 @@
 # 🧙‍♂️ Wacom Master Config - "The Re-Detector"
 # Detecta y configura TODOS los componentes de la Wacom (Stylus, Eraser, Pad, Touch)
 
-# Colores para la terminal
-GREEN='\033[0;32m'
-BLUE='\033[0;34m'
-YELLOW='\033[1;33m'
-RED='\033[0;31m'
-NC='\033[0m' # No Color
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+source "$SCRIPT_DIR/lib/common.sh"
 
 # 1. Localizar el archivo de configuración de forma robusta
 if [ -n "${SUDO_USER:-}" ]; then

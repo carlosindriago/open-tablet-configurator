@@ -1,11 +1,11 @@
 #!/bin/bash
 # ============================================================
-# 🚀 Wacom Linux - One-Line Installer
+# 🚀 Open Tablet Configurator - One-Line Installer
 # 
 # Instalación rápida con un solo comando:
-#   wget -qO- https://raw.githubusercontent.com/carlosindriago/wacom-linux/main/setup.sh | bash
+#   wget -qO- https://raw.githubusercontent.com/carlosindriago/open-tablet-configurator/main/setup.sh | bash
 #   # o
-#   curl -fsSL https://raw.githubusercontent.com/carlosindriago/wacom-linux/main/setup.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/carlosindriago/open-tablet-configurator/main/setup.sh | bash
 #
 # Este script:
 #   1. Detecta dependencias faltantes
@@ -25,8 +25,8 @@ BOLD='\033[1m'
 NC='\033[0m'
 
 # Config
-REPO_URL="https://github.com/carlosindriago/wacom-linux.git"
-INSTALL_DIR="$HOME/.wacom-linux"
+REPO_URL="https://github.com/carlosindriago/open-tablet-configurator.git"
+INSTALL_DIR="$HOME/.open-tablet-configurator"
 BRANCH="${WACOM_BRANCH:-main}"
 
 # Print functions
@@ -151,9 +151,10 @@ case "$response" in
         # Just install scripts without TUI
         print_step "Instalación rápida sin configuración interactiva..."
         
-        # Copy scripts
-        cp .wacom_config.sh .wacom_toggle.sh .wacom_udev_trigger.sh .wacom_button_logic.sh .wacom_rotation_toggle.sh "$HOME/"
-        chmod +x "$HOME"/.wacom_*.sh
+        # Make scripts executable
+        chmod +x "$INSTALL_DIR"/scripts/core/*.sh
+        chmod +x "$INSTALL_DIR"/scripts/udev/*.sh
+        chmod +x "$INSTALL_DIR"/scripts/utils/*.sh
         
         # Create default settings
         cat <<EOF > "$HOME/.wacom_settings.env"
@@ -166,7 +167,7 @@ PRESSURE_CURVE="0 20 80 100"
 EOF
         
         # udev rule
-        echo "ACTION==\"add\", SUBSYSTEM==\"usb\", ATTRS{idVendor}==\"056a\", RUN+=\"$HOME/.wacom_udev_trigger.sh\"" | sudo tee /etc/udev/rules.d/99-wacom.rules > /dev/null
+        echo "ACTION==\"add\", SUBSYSTEM==\"usb\", ATTRS{idVendor}==\"056a\", RUN+=\"$INSTALL_DIR/scripts/udev/wacom-udev-trigger.sh\"" | sudo tee /etc/udev/rules.d/99-wacom.rules > /dev/null
         sudo udevadm control --reload-rules && sudo udevadm trigger
         
         # Autostart
@@ -174,7 +175,7 @@ EOF
         cat <<EOF > "$HOME/.config/autostart/wacom-config.desktop"
 [Desktop Entry]
 Type=Application
-Exec=$HOME/.wacom_config.sh
+Exec=$INSTALL_DIR/scripts/core/wacom-config.sh
 Hidden=false
 NoDisplay=false
 X-GNOME-Autostart-enabled=true
@@ -183,7 +184,7 @@ EOF
         
         # Apply now if possible
         if [ -n "$DISPLAY" ]; then
-            bash "$HOME/.wacom_config.sh"
+            bash "$INSTALL_DIR/scripts/core/wacom-config.sh"
             print_success "Configuración aplicada"
         fi
         
@@ -201,4 +202,4 @@ EOF
 esac
 
 echo -e "\n${GREEN}${BOLD}¡Gracias por usar Wacom Linux!${NC}"
-echo -e "${CYAN}Documentación: https://github.com/carlosindriago/wacom-linux${NC}\n"
+echo -e "${CYAN}Documentación: https://github.com/carlosindriago/open-tablet-configurator${NC}\n"

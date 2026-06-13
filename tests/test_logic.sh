@@ -1,5 +1,5 @@
 #!/bin/bash
-# 🧪 Wacom Linux Tool - Advanced Logic Tester (CI-Safe)
+# 🧪 Open Graphic Tablet Configurator - Advanced Logic Tester (CI-Safe)
 # shellcheck disable=SC2329
 
 GREEN='\033[0;32m'
@@ -8,70 +8,61 @@ NC='\033[0m'
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CONFIG_SCRIPT="$REPO_DIR/.wacom_config.sh"
-MOCK_LOG="/tmp/xsetwacom_mock.log"
+source "$REPO_DIR/tests/mock-hardware.sh"
 
 echo "--- 🧪 INICIANDO ADVANCED LOGIC TESTS ---"
 
-# TEST 1: Detección dinámica (Intuos Pro)
-echo -n "Test 1: Detección dinámica de modelo... "
-rm -f "$MOCK_LOG"
+run_test() {
+    local test_name="$1"
+    local expected="$2"
+    
+    rm -f "$MOCK_LOG"
+    bash "$CONFIG_SCRIPT" >/dev/null 2>&1 || true
+    
+    if [ -f "$MOCK_LOG" ] && grep -q "$expected" "$MOCK_LOG"; then
+        echo -e "${GREEN}PASSED${NC}: $test_name"
+    else
+        echo -e "${RED}FAILED${NC}: $test_name"
+        echo "Expected to find: $expected"
+        [ -f "$MOCK_LOG" ] && cat "$MOCK_LOG" || echo "No se generó el log."
+        exit 1
+    fi
+}
 
-# Create settings file in the CORRECT location ($HOME/.wacom_settings.env)
-# The config script calculates: SETTINGS_FILE="$USER_HOME/.wacom_settings.env"
+# ---------------------------------------------------------
+# Test 1: Left-handed rotation (half)
+# ---------------------------------------------------------
 cat > "$HOME/.wacom_settings.env" << 'EOF'
 ROTATION="half"
-BUTTON_2="3"
-BUTTON_3="key F10"
 SCREEN="ALL"
 PRESSURE_CURVE="0 20 80 100"
 EOF
+run_test "Left-handed rotation applies 'Rotate half'" "SET: Wacom Intuos Pro M Pen stylus Rotate half"
 
-# Create mock runner script
-cat > /tmp/mock_runner.sh << 'MOCKSCRIPT'
-#!/bin/bash
+# ---------------------------------------------------------
+# Test 2: Right-handed rotation (none)
+# ---------------------------------------------------------
+cat > "$HOME/.wacom_settings.env" << 'EOF'
+ROTATION="none"
+SCREEN="ALL"
+EOF
+run_test "Right-handed rotation applies 'Rotate none'" "SET: Wacom Intuos Pro M Pen stylus Rotate none"
 
-# Mock xsetwacom - captures all calls
-xsetwacom() {
-    case "$1" in
-        --list)
-            echo -e "Wacom Intuos Pro M Pen stylus \t id: 10 \t type: STYLUS"
-            ;;
-        --set)
-            echo "SET: $*" >> /tmp/xsetwacom_mock.log
-            ;;
-        --get)
-            echo "Absolute"
-            ;;
-    esac
-}
+# ---------------------------------------------------------
+# Test 3: Specific screen mapping
+# ---------------------------------------------------------
+cat > "$HOME/.wacom_settings.env" << 'EOF'
+ROTATION="none"
+SCREEN="HDMI-1"
+EOF
+run_test "Maps to specific screen (HDMI-1)" "SET: Wacom Intuos Pro M Pen stylus MapToOutput HDMI-1"
 
-# Mock notify-send for CI
-notify-send() {
-    :
-}
-
-export -f xsetwacom
-export -f notify-send
-
-# Source the config script
-source "$1"
-MOCKSCRIPT
-
-chmod +x /tmp/mock_runner.sh
-
-# Run the wrapper
-/tmp/mock_runner.sh "$CONFIG_SCRIPT" 2>&1 || true
-
-# Check results
-if [ -f "$MOCK_LOG" ] && grep -q "Rotate half" "$MOCK_LOG"; then
-    echo -e "${GREEN}PASSED${NC}"
-else
-    echo -e "${RED}FAILED${NC}"
-    echo "Expected: Rotate half"
-    [ -f "$MOCK_LOG" ] && cat "$MOCK_LOG" || echo "No se generó el log."
-    rm -f "$MOCK_LOG" "$HOME/.wacom_settings.env" /tmp/mock_runner.sh
-    exit 1
-fi
+# ---------------------------------------------------------
+# Test 4: Web App compatibility defaults
+# ---------------------------------------------------------
+rm -f "$HOME/.wacom_settings.env"
+run_test "Applies web-app compatible pressure curve by default" "SET: Wacom Intuos Pro M Pen stylus PressureCurve 0 0 100 100"
 
 echo -e "\n${GREEN}✅ ¡TODOS LOS TESTS PASARON!${NC}"
-rm -f "$MOCK_LOG" "$HOME/.wacom_settings.env" /tmp/mock_runner.sh
+rm -f "$MOCK_LOG" "$HOME/.wacom_settings.env"
+

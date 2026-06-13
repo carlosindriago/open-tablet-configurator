@@ -1,8 +1,6 @@
 #!/bin/bash
-# 🛠️ Wacom Linux Tool - System Verifier
-# Verifica que la instalación en el sistema fue exitosa
+# 🧪 Open Graphic Tablet Configurator - Installation Verifier
 
-# Colores
 GREEN='\033[0;32m'
 RED='\033[0;31m'
 NC='\033[0m'

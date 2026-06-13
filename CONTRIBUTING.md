@@ -1,24 +1,61 @@
-# 🤝 Cómo Contribuir
+# 🤝 Contributing Guidelines
 
-¡Gracias por querer mejorar este proyecto! Seguir estas reglas nos ayuda a mantener el código limpio y profesional.
+First off, thank you for considering contributing to Wacom Linux! It's people like you that make the open-source community such a fantastic place to learn, inspire, and create.
 
-## Cómo empezar
-1. Haz un **Fork** de este repositorio.
-2. Crea una **rama** para tu cambio: `git checkout -b feature/mi-mejora` o `git checkout -b fix/problema-encontrado`.
-3. Haz tus cambios y **pruébalos** con tu hardware.
-4. Haz un **Push** a tu rama: `git push origin feature/mi-mejora`.
-5. Abre un **Pull Request** (PR) detallando qué cambiaste y por qué.
+## 🚀 Getting Started
 
-## Reglas de estilo
-- Mantén los nombres de los scripts claros y con prefijo `.wacom_` si son configuraciones de usuario.
-- Usa variables en los scripts en lugar de valores fijos (como IDs de dispositivos).
-- Comenta el código, especialmente las partes de `udev` o `xsetwacom` que no sean obvias.
+1. **Fork the repository** on GitHub.
+2. **Clone your fork** locally: `git clone https://github.com/YOUR-USERNAME/open-tablet-configurator.git`
+3. **Set up your environment**. Refer to the [Development Guide](docs/DEVELOPMENT.md) for local setup instructions.
+4. **Create a branch** for your feature or bugfix: `git checkout -b feature/amazing-feature` or `git checkout -b fix/annoying-bug`.
 
-## Reporte de Errores
-Si encuentras un bug o tu modelo de Wacom no funciona, por favor abre un **Issue** incluyendo:
-- Modelo exacto de Wacom.
-- Distribución de Linux que usas.
-- Error que aparece en la terminal al ejecutar los scripts.
+## 📜 Commit Conventions
 
----
-*¡Vamos a hacer que usar una Wacom en Linux sea un placer para todos!*
+We strictly follow [Conventional Commits](https://www.conventionalcommits.org/). Your commit messages should follow this format:
+
+```
+<type>(<scope>): <subject>
+
+<body>
+```
+
+**Allowed Types:**
+- `feat`: A new feature
+- `fix`: A bug fix
+- `docs`: Documentation only changes
+- `style`: Changes that do not affect the meaning of the code (white-space, formatting, etc.)
+- `refactor`: A code change that neither fixes a bug nor adds a feature
+- `perf`: A code change that improves performance
+- `test`: Adding missing tests or correcting existing tests
+- `chore`: Changes to the build process or auxiliary tools
+
+## 🧪 Testing
+
+All new features and bug fixes **must** include appropriate tests.
+
+For shell scripts:
+- We use a mock-based testing approach. See `tests/test_logic.sh` for examples.
+- You can test logic without physical hardware using our mock utilities.
+
+For the Electron dashboard:
+- Ensure `npm run test` passes.
+- Ensure `npm run lint` and `npm run typecheck` report no errors.
+
+## 🔀 Pull Request Process
+
+1. Ensure all tests and linters pass (`npm run test`, `./tests/test_logic.sh`).
+2. Update the README.md or documentation in `docs/` with details of changes to the interface, this includes new environment variables, exposed ports, useful file locations, and container parameters.
+3. Open a Pull Request against the `main` branch.
+4. Fill out the PR template completely.
+5. Wait for a code review from the maintainers. We aim to review PRs within 48 hours.
+
+## 🐛 Bug Reports
+
+If you find a bug, please open an issue using the Bug Report template. Include:
+- Your exact Wacom model.
+- Your Linux distribution and version.
+- Your Desktop Environment (XFCE, GNOME, etc.).
+- Steps to reproduce the behavior.
+- Expected behavior vs. actual behavior.
+
+Thank you for contributing!

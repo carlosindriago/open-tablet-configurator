@@ -1,5 +1,5 @@
 #!/bin/bash
-# 🧹 Wacom Linux Tool - Uninstaller
+# 🧹 Open Graphic Tablet Configurator - Uninstaller
 # Removes all scripts, rules, and configurations from the system
 
 set -e
@@ -7,10 +7,11 @@ set -e
 # Colors
 BLUE='\033[0;34m'
 RED='\033[0;31m'
+GREEN='\033[0;32m'
 NC='\033[0m'
 
 echo -e "${BLUE}====================================================${NC}"
-echo -e "${RED}   🗑️  DESINSTALADOR WACOM LINUX TOOL              ${NC}"
+echo -e "${RED}   🗑️  DESINSTALADOR OPEN GRAPHIC TABLET CONFIGURATOR              ${NC}"
 echo -e "${BLUE}====================================================${NC}"
 
 read -rp "¿Estás seguro de que deseas eliminar toda la configuración? [s/N]: " confirm
@@ -24,7 +25,10 @@ echo -e "\n${BLUE}[1/4] Eliminando scripts del HOME...${NC}"
 rm -f "$HOME/.wacom_config.sh"
 rm -f "$HOME/.wacom_toggle.sh"
 rm -f "$HOME/.wacom_udev_trigger.sh"
+rm -f "$HOME/.wacom_button_logic.sh"
+rm -f "$HOME/.wacom_rotation_toggle.sh"
 rm -f "$HOME/.wacom_settings.env"
+echo "✅ Archivos de configuración en HOME eliminados (legacy)."
 echo "✅ Scripts y perfiles eliminados."
 
 # 2. Eliminar regla de udev (Requiere SUDO)
@@ -51,8 +55,8 @@ fi
 
 # 4. Limpieza Final
 echo -e "\n${BLUE}[4/4] Restaurando valores de fábrica (si la tablet está conectada)...${NC}"
-DEVICE="Wacom One by Wacom S Pen stylus"
-if xsetwacom --list devices | grep -q "$DEVICE"; then
+DEVICE=$(xsetwacom --list devices 2>/dev/null | grep -i 'STYLUS' | head -1 | cut -f 1 | xargs)
+if [ -n "$DEVICE" ]; then
     xsetwacom --set "$DEVICE" Rotate none
     xsetwacom --set "$DEVICE" ResetParameters
     echo "✅ Valores de la tablet reseteados."

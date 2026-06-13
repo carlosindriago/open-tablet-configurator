@@ -190,16 +190,42 @@ export class WacomService {
     }
   }
 
-  async applyConfig(config: any): Promise<void> {
+async applyConfig(config: any): Promise<void> {
     // Apply all settings from the config
-    await this.setOrientation(config.orientation)
-    await this.setMode(config.mode)
-    await this.setScreen(config.screen)
-    await this.setPressureCurve(config.pressureCurve)
+    // Guardar configuración de presión antes (puede ser reseteada por setters)
+    const devices = await this.getDevices()
+    const stylus = devices.find(d => d.type === 'STYLUS')
+    if (!stylus) {
+      throw new WacomError('No stylus device found', ErrorCode.NO_DEVICE_FOUND)
+    }
     
-    // Apply button mappings
-    for (const [button, action] of Object.entries(config.buttonMappings)) {
-      await this.setButtonMapping(parseInt(button), action as string)
+    // Guardar configuración actual
+    const savedPressureCurve = await this.getPressureCurve(stylus.id)
+    const savedThresholdResult = await execAsync(`xsetwacom --get "${stylus.id}" Threshold`).catch(() => ({ stdout: '10' }))
+    const savedThreshold = parseInt(savedThresholdResult.stdout.trim())
+    const savedRecalResult = await execAsync(`xsetwacom --get "${stylus.id}" PressureRecalibration`).catch(() => ({ stdout: 'on' }))
+    const savedRecalibration = savedRecalResult.stdout.trim()
+    
+    try {
+      // Apply all settings
+      await this.setOrientation(config.orientation)
+      await this.setMode(config.mode)
+      await this.setScreen(config.screen)
+      await this.setPressureCurve(config.pressureCurve)
+
+      // Apply button mappings
+      for (const [button, action] of Object.entries(config.buttonMappings)) {
+        await this.setButtonMapping(parseInt(button), action as string)
+      }
+    } finally {
+      // Restaurar configuración de presión (puede haber sido reseteada)
+      try {
+        await this.setPressureCurve(savedPressureCurve)
+        await execAsync(`xsetwacom set "${stylus.id}" Threshold ${savedThreshold}`)
+        await execAsync(`xsetwacom set "${stylus.id}" PressureRecalibration ${savedRecalibration}`)
+      } catch (restoreError) {
+        console.warn('Warning: Could not restore pressure configuration', restoreError)
+      }
     }
   }
 

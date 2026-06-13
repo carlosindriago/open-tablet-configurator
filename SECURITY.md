@@ -54,7 +54,7 @@ Please include the following information in your report:
 1. **X11 Only**: This tool requires X11. Do not use on Wayland as it may not function correctly.
 2. **Run as User**: Never run the installer or scripts as root. They use `sudo` only when necessary.
 3. **Review Scripts**: Before running, review the scripts to understand what they do.
-4. **Verify Download**: Always download from the official repository: https://github.com/carlosindriago/wacom-linux
+4. **Verify Download**: Always download from the official repository: https://github.com/carlosindriago/open-tablet-configurator
 
 ### Known Security Considerations
 

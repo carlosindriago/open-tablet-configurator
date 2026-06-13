@@ -59,18 +59,18 @@ fi
     case $FINAL_COUNT in
         1)
             # 1 Tap: Toggle Modo Mouse/Tableta
-            "$HOME/.wacom_toggle.sh"
+            "$HOME/.open-tablet-configurator/scripts/core/wacom-toggle.sh"
             ;;
-2)
-    # 2 Taps: Copiar (Ctrl+C)
-    xdotool key ctrl+c
-    command -v notify-send &> /dev/null && notify-send -t 1000 "Wacom" "<b>COPIADO</b> 📋" --icon=edit-copy
-    ;;
-3)
-    # 3 Taps: Pegar (Ctrl+V)
-    xdotool key ctrl+v
-    command -v notify-send &> /dev/null && notify-send -t 1000 "Wacom" "<b>PEGADO</b> 📥" --icon=edit-paste
-    ;;
+        2)
+            # 2 Taps: Copiar (Ctrl+C)
+            xdotool key ctrl+c
+            command -v notify-send &> /dev/null && notify-send -t 1000 "Wacom" "<b>COPIADO</b> 📋" --icon=edit-copy
+            ;;
+        3)
+            # 3 Taps: Pegar (Ctrl+V)
+            xdotool key ctrl+v
+            command -v notify-send &> /dev/null && notify-send -t 1000 "Wacom" "<b>PEGADO</b> 📥" --icon=edit-paste
+            ;;
     esac
     
     # Resetear contador
