@@ -27,13 +27,13 @@ echo "✅ UDEV recargado"
 
 echo ""
 echo "✅ SISTEMA LIMPIO - Desconectá la tableta USB AHORA"
-read -p "Presioná ENTER cuando hayas desconectado..."
+read -r -p "Presiona ENTER después de desconectar y reconectar..."
 echo ""
 
 echo "PASO 2: INSTALACIÓN NUEVA"
 echo "───────────────────────────────────────────────────────────"
 echo "2.1 Copiando scripts frescos (con fixes aplicados)..."
-cd /home/carlos/wacom-zurdo-setup
+cd /home/carlos/wacom-zurdo-setup || exit
 cp -v .wacom_*.sh "$HOME/"
 chmod +x "$HOME"/.wacom_*.sh
 echo "✅ Scripts copiados"
@@ -50,7 +50,7 @@ echo "✅ UDEV recargado"
 
 echo ""
 echo "✅ INSTALACIÓN LISTA - Conectá la tableta USB AHORA"
-read -p "Presioná ENTER cuando hayas conectado (esperar 5 segundos)..."
+read -r -p "Presioná ENTER cuando hayas conectado (esperar 5 segundos)..."
 sleep 5
 
 echo ""

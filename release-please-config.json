@@ -1,0 +1,8 @@
+{
+  "packages": {
+    "dashboard": {
+      "release-type": "node",
+      "package-name": "open-graphic-tablet-configurator"
+    }
+  }
+}

@@ -1,6 +1,7 @@
 #!/bin/bash
 # 🖱️ Wacom Mode Toggle (Dynamic Version)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+# shellcheck disable=SC1091
 source "$SCRIPT_DIR/lib/common.sh"
 # Alterna entre modo Tableta (Absoluto) y Mouse (Relativo)
 

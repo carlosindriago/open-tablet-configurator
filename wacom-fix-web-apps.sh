@@ -2,12 +2,12 @@
 # 🔧 Wacom Web Apps Fix - Solución rápida para problemas de presión en navegadores
 # Este script aplica la configuración correcta para que apps web (Excalidraw, etc.) funcionen
 
-DEVICE_ID=9 # Stylus ID (se verificará dinámicamente)
+export DEVICE_ID=$(xsetwacom --list devices | grep -i "stylus" | grep -o "id: [0-9]*" | awk '{print $2}')
 
 echo "🔧 Aplicando fix para apps web..."
 echo "📍 Detectando stylus..."
 
-STYLUS_ID=$(xsetwacom --list devices | grep "stylus" | awk '{print $7}')
+STYLUS_ID=$DEVICE_ID
 if [ -z "$STYLUS_ID" ]; then
  echo "❌ No se detectó stylus Wacom"
  exit 1
