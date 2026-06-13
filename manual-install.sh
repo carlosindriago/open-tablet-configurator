@@ -6,8 +6,12 @@ echo ""
 
 # PASO 1: Copiar scripts
 echo "📋 PASO 1: Copiando scripts de configuración..."
-cp -v .wacom_*.sh "$HOME/"
-if [ $? -ne 0 ]; then
+if ! command -v xsetwacom &> /dev/null; then
+    echo "xserver-xorg-input-wacom no está instalado. Ejecuta:"
+    echo "sudo apt install xserver-xorg-input-wacom"
+    exit 1
+fi
+if ! cp -v .wacom_*.sh "$HOME/"; then
   echo "❌ Error: No se pudieron copiar los scripts"
   exit 1
 fi
@@ -23,10 +27,9 @@ echo ""
 
 # PASO 3: Crear regla udev personalizada
 echo "⚙️  PASO 3: Creando regla personalizada (99-wacom.rules)..."
-sudo bash -c 'cat > /etc/udev/rules.d/99-wacom.rules << EOF
+if ! sudo bash -c 'cat > /etc/udev/rules.d/99-wacom.rules << EOF
 ACTION=="add", SUBSYSTEM=="usb", ATTRS{idVendor}=="056a", RUN+="/home/carlos/.wacom_udev_trigger.sh"
-EOF'
-if [ $? -ne 0 ]; then
+EOF'; then
   echo "❌ Error al crear regla udev"
   exit 1
 fi
@@ -44,7 +47,7 @@ echo ""
 echo "🔄 PASO 5: IMPORTANTE: Desconectá y volvé a conectar"
 echo "   la tableta USB físicamente AHORA"
 echo ""
-read -p "Presioná ENTER cuando hayas reconectado la tableta..."
+read -r -p "Presiona ENTER para salir..."
 echo ""
 
 # PASO 6: Esperar y verificar

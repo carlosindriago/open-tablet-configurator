@@ -8,6 +8,7 @@ NC='\033[0m'
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CONFIG_SCRIPT="$REPO_DIR/.wacom_config.sh"
+# shellcheck disable=SC1091
 source "$REPO_DIR/tests/mock-hardware.sh"
 
 echo "--- 🧪 INICIANDO ADVANCED LOGIC TESTS ---"

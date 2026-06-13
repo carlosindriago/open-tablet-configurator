@@ -23,21 +23,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install bash coverage tools
-        run: sudo apt-get update && sudo apt-get install -y kcov
       - name: Setup permissions
         run: chmod +x ./*.sh ./tests/*.sh
-      - name: Run Logic Tests with Coverage
-        run: |
-          mkdir -p coverage
-          kcov coverage ./tests/test_logic.sh
+      - name: Run Logic Tests
+        run: ./tests/test_logic.sh
       - name: Run Verify Install Test
         run: ./tests/verify_install.sh || true
-      - name: Upload coverage
-        uses: codecov/codecov-action@v4
-        with:
-          directory: ./coverage
-          token: ${{ secrets.CODECOV_TOKEN }}
 
   dashboard-build:
     name: 🖥️ Dashboard Build

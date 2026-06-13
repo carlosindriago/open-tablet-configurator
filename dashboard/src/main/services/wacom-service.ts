@@ -162,6 +162,19 @@ export class WacomService {
     }
   }
 
+  async getPressureCurve(deviceId: string): Promise<PressureCurve> {
+    try {
+      const { stdout } = await execAsync(`xsetwacom --get "${deviceId}" PressureCurve`)
+      const values = stdout.trim().split(' ').map(Number)
+      if (values.length === 4 && !values.some(isNaN)) {
+        return values as PressureCurve
+      }
+      return [0, 0, 100, 100]
+    } catch {
+      return [0, 0, 100, 100]
+    }
+  }
+
   async setPressureCurve(curve: PressureCurve): Promise<void> {
     const devices = await this.getDevices()
     const stylus = devices.find(d => d.type === 'STYLUS')

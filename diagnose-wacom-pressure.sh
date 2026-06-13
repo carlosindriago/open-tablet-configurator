@@ -7,8 +7,7 @@ xsetwacom --get 9 Threshold 2>&1 | grep -v "Cannot find" || echo "Tableta no con
 xsetwacom --get 9 PressureRecalibration 2>&1 | grep -v "Cannot find" || echo "Tableta no conectada"
 echo ""
 echo "2️⃣ Forzando reconexión (desconectá y conectá la tableta AHORA)"
-echo "Presioná ENTER cuando la hayas reconectado..."
-read
+read -r -p "Presioná ENTER cuando la hayas reconectado..."
 sleep 3
 echo ""
 echo "3️⃣ Después de reconectar (con defaults del sistema):"
