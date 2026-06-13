@@ -7,7 +7,7 @@ RED='\033[0;31m'
 NC='\033[0m'
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-CONFIG_SCRIPT="$REPO_DIR/.wacom_config.sh"
+CONFIG_SCRIPT="$REPO_DIR/scripts/core/wacom-config.sh"
 # shellcheck disable=SC1091
 source "$REPO_DIR/tests/mock-hardware.sh"
 
@@ -38,7 +38,7 @@ ROTATION="half"
 SCREEN="ALL"
 PRESSURE_CURVE="0 20 80 100"
 EOF
-run_test "Left-handed rotation applies 'Rotate half'" "SET: Wacom Intuos Pro M Pen stylus Rotate half"
+run_test "Left-handed rotation applies 'Rotate half'" "SET: --set Wacom Intuos Pro M Pen stylus Rotate half"
 
 # ---------------------------------------------------------
 # Test 2: Right-handed rotation (none)
@@ -47,7 +47,7 @@ cat > "$HOME/.wacom_settings.env" << 'EOF'
 ROTATION="none"
 SCREEN="ALL"
 EOF
-run_test "Right-handed rotation applies 'Rotate none'" "SET: Wacom Intuos Pro M Pen stylus Rotate none"
+run_test "Right-handed rotation applies 'Rotate none'" "SET: --set Wacom Intuos Pro M Pen stylus Rotate none"
 
 # ---------------------------------------------------------
 # Test 3: Specific screen mapping
@@ -56,13 +56,13 @@ cat > "$HOME/.wacom_settings.env" << 'EOF'
 ROTATION="none"
 SCREEN="HDMI-1"
 EOF
-run_test "Maps to specific screen (HDMI-1)" "SET: Wacom Intuos Pro M Pen stylus MapToOutput HDMI-1"
+run_test "Maps to specific screen (HDMI-1)" "SET: --set Wacom Intuos Pro M Pen stylus MapToOutput HDMI-1"
 
 # ---------------------------------------------------------
 # Test 4: Web App compatibility defaults
 # ---------------------------------------------------------
 rm -f "$HOME/.wacom_settings.env"
-run_test "Applies web-app compatible pressure curve by default" "SET: Wacom Intuos Pro M Pen stylus PressureCurve 0 0 100 100"
+run_test "Applies web-app compatible pressure curve by default" "SET: --set Wacom Intuos Pro M Pen stylus PressureCurve 0 0 100 100"
 
 echo -e "\n${GREEN}✅ ¡TODOS LOS TESTS PASARON!${NC}"
 rm -f "$MOCK_LOG" "$HOME/.wacom_settings.env"
