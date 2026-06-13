@@ -34,7 +34,7 @@ jobs:
       - name: Run Verify Install Test
         run: ./tests/verify_install.sh || true
       - name: Upload coverage
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v7
         with:
           directory: ./coverage
           token: ${{ secrets.CODECOV_TOKEN }}
