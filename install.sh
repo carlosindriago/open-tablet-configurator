@@ -1,5 +1,5 @@
 #!/bin/bash
-# 🎨 Wacom Linux Tool - Universal Multi-Device Installer (TUI Edition)
+# 🎨 Open Graphic Tablet Configurator - Universal Multi-Device Installer (TUI Edition)
 # Supports ANY Wacom Tablet (X11) - Optimized for Multi-Monitor setups
 
 set -e
@@ -17,7 +17,7 @@ TITLE="Wacom Universal Linux Customizer"
 # Determine script's absolute directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-echo -e "${BLUE}[1/4] Verificando dependencias...${NC}"
+echo -e "${BLUE}[1/5] Verificando dependencias...${NC}"
 # Collect missing packages
 missing_packages=()
 if ! command -v whiptail &> /dev/null; then missing_packages+=(whiptail); fi
@@ -82,15 +82,16 @@ EOF
 
 # --- SYSTEM INSTALLATION ---
 
-# 1. Copiar scripts
-echo -e "${BLUE}[2/4] Desplegando scripts en tu carpeta personal...${NC}"
-cp "$SCRIPT_DIR"/.wacom_config.sh "$SCRIPT_DIR"/.wacom_toggle.sh "$SCRIPT_DIR"/.wacom_udev_trigger.sh "$SCRIPT_DIR"/.wacom_button_logic.sh "$SCRIPT_DIR"/.wacom_rotation_toggle.sh "$HOME/"
-chmod +x "$HOME"/.wacom_*.sh
+# 1. Permisos de scripts
+echo -e "${BLUE}[2/5] Configurando scripts...${NC}"
+chmod +x "$SCRIPT_DIR"/scripts/core/*.sh
+chmod +x "$SCRIPT_DIR"/scripts/udev/*.sh
+chmod +x "$SCRIPT_DIR"/scripts/utils/*.sh
 
 # 2. Regla udev
-echo -e "${BLUE}[3/4] Configurando persistencia udev...${NC}"
+echo -e "${BLUE}[3/5] Configurando persistencia udev...${NC}"
 RULE_PATH="/etc/udev/rules.d/99-wacom.rules"
-echo 'ACTION=="add", SUBSYSTEM=="usb", ATTRS{idVendor}=="056a", RUN+="'"$HOME"/.wacom_udev_trigger.sh'"' | sudo tee "$RULE_PATH" > /dev/null
+echo 'ACTION=="add", SUBSYSTEM=="usb", ATTRS{idVendor}=="056a", RUN+="'"$SCRIPT_DIR"'/scripts/udev/wacom-udev-trigger.sh"' | sudo tee "$RULE_PATH" > /dev/null
 sudo udevadm control --reload-rules && sudo udevadm trigger
 
 # 3. Autostart
@@ -98,7 +99,7 @@ mkdir -p "$HOME/.config/autostart"
 cat <<EOF > "$HOME/.config/autostart/wacom-config.desktop"
 [Desktop Entry]
 Type=Application
-Exec=$HOME/.wacom_config.sh
+Exec=$SCRIPT_DIR/scripts/core/wacom-config.sh
 Hidden=false
 NoDisplay=false
 X-GNOME-Autostart-enabled=true
@@ -106,20 +107,20 @@ Name=Wacom Universal Config
 EOF
 
 # 4. CONFIGURACIÓN DE ATAJOS DE TECLADO
-echo -e "${BLUE}[4/4] Configurando atajos de teclado automáticamente...${NC}"
+echo -e "${BLUE}[4/5] Configurando atajos de teclado automáticamente...${NC}"
 
 # --- DETECCIÓN DE XFCE ---
 if command -v xfconf-query &> /dev/null && [ "$XDG_CURRENT_DESKTOP" = "XFCE" ]; then
     echo -e "${YELLOW}🛠️ Detectado XFCE. Configurando atajos vía xfconf...${NC}"
     
     # Botón del Lápiz (F10) -> Lógica (Copy/Paste/Mode)
-    xfconf-query -c xfce4-keyboard-shortcuts -p "/commands/custom/F10" -n -t string -s "$HOME/.wacom_button_logic.sh"
+    xfconf-query -c xfce4-keyboard-shortcuts -p "/commands/custom/F10" -n -t string -s "$SCRIPT_DIR/scripts/utils/wacom-button-logic.sh"
     
     # Teclado (Shift+F10) -> Rotación (Zurdo/Diestro)
-    xfconf-query -c xfce4-keyboard-shortcuts -p "/commands/custom/<Shift>F10" -n -t string -s "$HOME/.wacom_rotation_toggle.sh"
+    xfconf-query -c xfce4-keyboard-shortcuts -p "/commands/custom/<Shift>F10" -n -t string -s "$SCRIPT_DIR/scripts/utils/wacom-rotation-toggle.sh"
     
     # Teclado (Shift+F11) -> Rotación (Por compatibilidad con la guía)
-    xfconf-query -c xfce4-keyboard-shortcuts -p "/commands/custom/<Shift>F11" -n -t string -s "$HOME/.wacom_rotation_toggle.sh"
+    xfconf-query -c xfce4-keyboard-shortcuts -p "/commands/custom/<Shift>F11" -n -t string -s "$SCRIPT_DIR/scripts/utils/wacom-rotation-toggle.sh"
     
     echo -e "${GREEN}✅ Atajos de XFCE configurados correctamente.${NC}"
 fi
@@ -134,7 +135,7 @@ if [ -f "$RC_FILE" ]; then
     else
         echo -e "${YELLOW}🛠️ Agregando atajos a $RC_FILE...${NC}"
         # Creamos el bloque XML de atajos corregido
-        WACOM_KEYS="\n    <!-- Wacom Multi-Action Shortcuts (Added by Installer) -->\n    <keybind key=\"F10\">\n      <action name=\"Execute\"><command>$HOME/.wacom_button_logic.sh</command></action>\n    </keybind>\n    <keybind key=\"S-F10\">\n      <action name=\"Execute\"><command>$HOME/.wacom_rotation_toggle.sh</command></action>\n    </keybind>\n    <keybind key=\"S-F11\">\n      <action name=\"Execute\"><command>$HOME/.wacom_rotation_toggle.sh</command></action>\n    </keybind>"
+        WACOM_KEYS="\n    <!-- Wacom Multi-Action Shortcuts (Added by Installer) -->\n    <keybind key=\"F10\">\n      <action name=\"Execute\"><command>$SCRIPT_DIR/scripts/utils/wacom-button-logic.sh</command></action>\n    </keybind>\n    <keybind key=\"S-F10\">\n      <action name=\"Execute\"><command>$SCRIPT_DIR/scripts/utils/wacom-rotation-toggle.sh</command></action>\n    </keybind>\n    <keybind key=\"S-F11\">\n      <action name=\"Execute\"><command>$SCRIPT_DIR/scripts/utils/wacom-rotation-toggle.sh</command></action>\n    </keybind>"
         
         sed -i "/<\/keyboard>/i $WACOM_KEYS" "$RC_FILE"
         
@@ -148,7 +149,7 @@ fi
 # --- APLICACIÓN INMEDIATA ---
 echo -e "${BLUE}[5/5] Forzando aplicación de cambios ahora mismo...${NC}"
 # Nos aseguramos de que el script de configuración tenga los permisos
-chmod +x "$HOME"/.wacom_*.sh
+chmod +x "$SCRIPT_DIR"/scripts/core/*.sh
 
 # 6. Aplicación inmediata (detectar DISPLAY robusto)
 # Intentamos usar DISPLAY actual; si no existe buscamos una sesión X11 activa
@@ -164,7 +165,7 @@ fi
 
 if [ -n "$ACTIVE_DISPLAY" ]; then
     export DISPLAY="$ACTIVE_DISPLAY"
-    bash "$HOME/.wacom_config.sh"
+    bash "$SCRIPT_DIR/scripts/core/wacom-config.sh"
     echo -e "${GREEN}✅ Configuración de hardware aplicada en DISPLAY=$ACTIVE_DISPLAY.${NC}"
 else
     echo -e "${YELLOW}⚠️ No se encontró una sesión gráfica activa. Ejecuta ~/.wacom_config.sh manualmente una vez inicies sesión X11.${NC}"

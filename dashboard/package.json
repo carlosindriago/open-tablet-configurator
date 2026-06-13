@@ -1,6 +1,6 @@
 {
-  "name": "wacom-dashboard",
-  "version": "1.0.0",
+  "name": "open-graphic-tablet-configurator",
+  "version": "2.0.0",
   "description": "Dashboard de configuración para tabletas Wacom en Linux",
   "main": "dist/main/index.js",
   "scripts": {
@@ -20,7 +20,7 @@
     "electron",
     "dashboard"
   ],
-  "author": "Wacom Linux Community",
+  "author": "Carlos Indriago",
   "license": "MIT",
   "devDependencies": {
     "@playwright/test": "^1.41.0",
@@ -48,8 +48,8 @@
     "zustand": "^4.5.0"
   },
   "build": {
-    "appId": "com.wacom.dashboard",
-    "productName": "Wacom Dashboard",
+    "appId": "com.zurdo.tabletconfig",
+    "productName": "Open Graphic Tablet Configurator",
     "directories": {
       "output": "release"
     },

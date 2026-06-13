@@ -55,6 +55,7 @@ const useWacomStore = create<WacomState>()(
 
     // Actions
     loadConfig: async () => {
+      if (!window.wacomAPI) return
       set({ isLoading: true, error: null })
       try {
         const config = await window.wacomAPI.getConfig()
@@ -194,6 +195,7 @@ const useWacomStore = create<WacomState>()(
     },
 
     refreshDevices: async () => {
+      if (!window.wacomAPI) return
       try {
         const deviceInfo = await window.wacomAPI.refreshDevices()
         set({ 
@@ -209,6 +211,7 @@ const useWacomStore = create<WacomState>()(
     },
 
     loadDisplays: async () => {
+      if (!window.wacomAPI) return
       try {
         const displays = await window.wacomAPI.getDisplays()
         set({ displays })
@@ -218,6 +221,7 @@ const useWacomStore = create<WacomState>()(
     },
 
     checkX11: async () => {
+      if (!window.wacomAPI) return
       try {
         const isX11 = await window.wacomAPI.checkX11()
         set({ isX11 })

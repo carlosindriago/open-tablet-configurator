@@ -50,7 +50,7 @@ XAUTH="$USER_HOME/.Xauthority"
 # Un toque de espera para que X11 asiente el hardware
 sleep 5
 # shellcheck disable=SC2024
-sudo -u "$REAL_USER" DISPLAY=:0 XAUTHORITY="$XAUTH" "$USER_HOME/.wacom_config.sh" >> "$LOG_FILE" 2>&1
+sudo -u "$REAL_USER" DISPLAY=:0 XAUTHORITY="$XAUTH" "$USER_HOME/.open-tablet-configurator/scripts/core/wacom-config.sh" >> "$LOG_FILE" 2>&1
 # Borrar el lock después de configurar (por las dudas)
 rm -f "$LOCK_FILE"
 ) &

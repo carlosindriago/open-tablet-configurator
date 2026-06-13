@@ -48,21 +48,26 @@ class WacomDashboard {
       height: 700,
       minWidth: 800,
       minHeight: 600,
-      show: false,
+      show: true,
       frame: false, // Remove title bar and menu
       titleBarStyle: 'hidden',
       webPreferences: {
         preload: path.join(__dirname, '../preload/index.js'),
         contextIsolation: true,
         nodeIntegration: false,
-        sandbox: true
+        sandbox: false
       }
     })
 
-    // Load the app
-    if (process.env.VITE_DEV_SERVER_URL) {
-      await this.mainWindow.loadURL(process.env.VITE_DEV_SERVER_URL)
-      this.mainWindow.webContents.openDevTools()
+    // Load the app - in dev use Vite server, in prod use built files
+    const devServerUrl = process.env.VITE_DEV_SERVER_URL || 'http://localhost:5173'
+    if (process.env.NODE_ENV !== 'production') {
+      try {
+        await this.mainWindow.loadURL(devServerUrl)
+      } catch (err) {
+        console.error('Failed to load dev server, falling back to built files:', err)
+        await this.mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'))
+      }
     } else {
       await this.mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'))
     }
@@ -331,6 +336,12 @@ class WacomDashboard {
 }
 
 // Initialize app
+app.disableHardwareAcceleration()
+app.commandLine.appendSwitch('disable-gpu')
+app.commandLine.appendSwitch('disable-software-rasterizer')
+app.commandLine.appendSwitch('disable-gpu-compositing')
+app.commandLine.appendSwitch('no-sandbox')
+app.commandLine.appendSwitch('disable-dev-shm-usage')
 const dashboard = new WacomDashboard()
 
 app.whenReady().then(() => {

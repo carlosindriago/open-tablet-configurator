@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [2.0.0] - 2026-06-12
 
 ### Added
 - Dashboard GUI with Electron + React + Zustand + Tailwind
@@ -41,5 +41,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Context isolation in Electron dashboard
 - Secure IPC bridge via preload script
 
-[Unreleased]: https://github.com/carlosindriago/wacom-linux/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/carlosindriago/wacom-linux/releases/tag/v1.0.0
+[Unreleased]: https://github.com/carlosindriago/open-tablet-configurator/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/carlosindriago/open-tablet-configurator/releases/tag/v1.0.0

@@ -26,7 +26,7 @@ sed -i "s/ROTATION=.*/ROTATION=\"$NEW_ROT\"/" "$SETTINGS_FILE"
 # 4. Aplicar a todos los dispositivos detectados (Llamamos al script maestro para que haga el laburo pesado)
 # Le pasamos la rotación como variable de entorno para que no falle
 export ROTATION="$NEW_ROT"
-"$USER_HOME"/.wacom_config.sh
+"$USER_HOME"/.open-tablet-configurator/scripts/core/wacom-config.sh
 
 # 5. Notificar
 command -v notify-send &> /dev/null && notify-send -t 3000 "Wacom" "Orientación cambiada a: <b>$MSG</b>" --icon=input-tablet

@@ -1,7 +1,7 @@
 #!/bin/bash
 # 🖱️ Wacom Mode Toggle (Dynamic Version)
-RED='\033[0;31m'
-NC='\033[0m'
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+source "$SCRIPT_DIR/lib/common.sh"
 # Alterna entre modo Tableta (Absoluto) y Mouse (Relativo)
 
 # 1. Cargar settings para saber el monitor preferido
